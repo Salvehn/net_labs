@@ -1,14 +1,6 @@
 # Задание 1
 
-Задание:
-
-- разобрать структуру приложенного Vagrantfile
-- нарисовать схему
-- расписать возможные подсети
-
-Схема сети:
-
-![mmm1](https://tva1.sinaimg.cn/large/007S8ZIlgy1gfzxmx4spwj31d00s441g.jpg)
+![Networking](https://tva1.sinaimg.cn/large/007S8ZIlgy1gftdo5romtj30w40k4ab6.jpg)
 
 Сети:
 
@@ -17,13 +9,6 @@
 - 192.168.2.0
 
 # Задание 2
-
-Задание:
-
-- Найти свободные подсети;
-- Подсчитать, сколько узлов в каждой подсети, включая свободные;
-- Указать broadcast-адрес для каждой подсети;
-- Проверить, нет ли ошибок при разбиении.
 
 ### Первая сеть
 
@@ -71,13 +56,6 @@
 
 # Задание 3
 
-Задание:
-
-- Все серверы и роутеры должны ходить в Интернет черз inetRouter;
-- Все серверы должны видеть друг друга;
-- У всех новых серверов отключить дефолт на NAT (eth0), который Vagrant поднимает для связи;
-- в README приложить скриншоты tracepath и ip r
-
 **office1Server**
 
 ![Снимок экрана 2020-06-15 в 18.19.16](https://tva1.sinaimg.cn/large/007S8ZIlgy1gftdvu254nj30v609safi.jpg)
@@ -92,14 +70,6 @@
 
 # Задание 4
 
-Задание:
-
-- поднять nginx на officе2Server
-- пробросить порт с локалхоста на inetRouter
-- настроить проброс порта до office2Server
-- запретить office1Server ходить на office2Server на 80й порт, все остальные должны работать
-- запретить office1Server отвечать на пинг, всем кроме inetRouter, но office1Server должен пинговать всех остальных
-
 **Блокировка на 80 порт**
 ![Снимок экрана 2020-06-15 в 18.59.28](https://tva1.sinaimg.cn/large/007S8ZIlgy1gftflxgw9vj30v20aktd0.jpg)
 
@@ -109,6 +79,57 @@
 
 # Задание 5
 
-**port knocking**
+### port knocking
+
+разрешаем соединения со статусами established и related 
+`iptables -A INPUT -m state --state ESTABLISHED, RELATED -j ACCEPT`
+
+разрешаем протокол icmp
+`iptables -A INPUT -p icmp --icmp-type any -j ACCEPT`
+
+создаем цепочку правил для PK
+`iptables -N SSH_KNOCK`
+
+создаем переход и цепочки INPUT в цепочку SSH_KNOCK
+`iptables -A INPUT -j SSH_KNOCK`
+
+Создаем цепочку правил для SSH_SET
+`iptables -N SSH_SET`
+
+предоставляем доступ, если наш хост есть в списке SSH_STEP2 менее 60 секунд
+`iptables -A SSH_KNOCK -m state --state NEW -m tcp -p tcp -m recent --rcheck --seconds 60 --dport 22 --name SSH_STEP2 -j ACCEPT`
+
+Если наш хост в списке более 60 секунд, то удаляем его
+`iptables -A SSH_KNOCK -m state --state NEW -m tcp -p tcp -m recent --name SSH_STEP2 --remove -j DROP`
+
+если наш хост стучался по порту 9966 и был в списке SSH_STEP1
+`iptables -A SSH_KNOCK -m state --state NEW -m tcp -p tcp -m recent -rcheck --dport 9966 --name SSH_STEP1 -j SSH_SET`
+
+то включаем его в список SSH_STEP2
+`iptables -A SSH_SET -m recent --set --name SSH_STEP2 -j DROP`
+
+иначе удаляем его из списка SSH_STEP1
+`iptables -A SSH_KNOCK -m state --state NEW -m tcp -p tcp -m recent --name SSH_STEP1 --remove -j DROP`
+
+если хост стучится по порту 6699, то добавить его в список SSH_STEP1
+`iptables -A SSH_KNOCK -m state --state NEW -m tcp -p tcp -m recent --set --dport 6699 --name SSH_STEP1 -j DROP`
+
+DROP по-умолчанию в PK
+`iptables -A SSH_KNOCK -j DROP`
+
+DROP по-умолчанию со стороны откуда будет идти проверка
+`iptables -A INPUT -i eth1 -j DROP`
+
+
+
+скрипт *knock.sh*
+
+```HOST=$1
+shift
+for ARG in "$@"
+do
+		nmap -Pn --host-timeout 100 --max-retries 0 -p $ARG $HOST
+done
+```
 
 ![Снимок экрана 2020-06-17 в 11.34.56](https://tva1.sinaimg.cn/large/007S8ZIlgy1gfvdfu7loij30yu0ludsx.jpg)
