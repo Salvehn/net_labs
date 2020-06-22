@@ -1,4 +1,4 @@
-**with provisioned vagrnat file**
+**with provisioned vagrant file**
 
 # Лабораторная работа №2
 
