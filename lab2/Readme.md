@@ -1,3 +1,5 @@
+**with provisioned vagrnat file**
+
 # Лабораторная работа №2
 
 Задание:
