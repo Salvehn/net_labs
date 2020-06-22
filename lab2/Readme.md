@@ -53,3 +53,4 @@ sudo firewall-cmd --list-all
 
 ### Настройка Router 1
 
+*в процессе*
