@@ -6,7 +6,7 @@
 - нарисовать схему
 - расписать возможные подсети
 
-![Networking](https://tva1.sinaimg.cn/large/007S8ZIlgy1gftdo5romtj30w40k4ab6.jpg)
+![mmm1](https://tva1.sinaimg.cn/large/007S8ZIlgy1gg18r5bfc4j31d00s441g.jpg)
 
 Сети:
 
