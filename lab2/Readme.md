@@ -1,5 +1,3 @@
-**with provisioned vagrant file**
-
 # Лабораторная работа №2
 
 Задание:
@@ -53,4 +51,73 @@ sudo firewall-cmd --list-all
 
 ### Настройка Router 1
 
-*в процессе*
+```
+...
+router ospf                  
+router-id  10.0.0.1           
+passive-interface default     
+network 172.16.0.0/24 area 0  
+no passive-interface eth1     
+default-information originate
+...
+copy running-config startup-config
+...
+sudo iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
+```
+
+![Снимок экрана 2020-06-22 в 23.51.03](https://tva1.sinaimg.cn/large/007S8ZIlgy1gg1qt9zg6fj30vu0osnbu.jpg)
+
+### Настройка Router 2
+
+```
+...
+router ospf                   
+router-id  10.0.0.2           
+passive-interface default     
+no passive-interface eth1     
+network 172.16.0.0/24 area 0  
+no passive-interface eth2     
+network 172.16.1.0/24 area 1 
+no passive-interface eth3     
+network 172.31.0.0/24 area 0  
+...
+copy running-config startup-config
+```
+
+![Снимок экрана 2020-06-22 в 23.54.22](https://tva1.sinaimg.cn/large/007S8ZIlgy1gg1qwop6mvj30u010zau6.jpg)
+
+### Настройка Router 3
+
+```
+...
+router ospf                    
+router-id  10.0.0.3            
+passive-interface default      
+no passive-interface eth1      
+network 172.16.0.0/24 area 0   
+no passive-interface eth2      
+network 192.168.0.0/24 area 0 
+no passive-interface eth3      
+network 172.31.0.0/24 area 0   
+...
+copy running-config startup-config 
+```
+
+![Снимок экрана 2020-06-22 в 23.56.21](https://tva1.sinaimg.cn/large/007S8ZIlgy1gg1qyps546j30vu0tck8z.jpg)
+
+### Настройка Router 4
+
+```
+...
+router ospf                        роутера
+router-id  10.0.0.4                
+passive-interface default          
+no passive-interface eth1          
+network 172.16.1.0/24 area 1       
+no passive-interface eth2          
+network 192.168.1.0/24 area 1      
+...
+copy running-config startup-config 
+```
+
+![Снимок экрана 2020-06-22 в 23.58.03](https://tva1.sinaimg.cn/large/007S8ZIlgy1gg1r0gypq8j30vu0oqk6l.jpg)
