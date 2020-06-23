@@ -6,8 +6,9 @@
 - Объединить эти виртуальные машины разными виртуальными каналами;
 - Настроить OSPFv2 между виртуальными машинами на базе quagga;
 
-  
+**Схема сети**
 
+![img](https://tva1.sinaimg.cn/large/007S8ZIlgy1gg2w58dbvcj31cr0u0gsh.jpg)
 **запуск стенда**
 `vagrant up`
 
@@ -122,7 +123,3 @@ copy running-config startup-config
 ```
 
 ![Снимок экрана 2020-06-22 в 23.58.03](https://tva1.sinaimg.cn/large/007S8ZIlgy1gg1r0gypq8j30vu0oqk6l.jpg)
-
-**Схема сети**
-
-![img](https://tva1.sinaimg.cn/large/007S8ZIlgy1gg2w3i6dsoj31cr0u0gsh.jpg)
